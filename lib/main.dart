@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skincare_products_shopping_app/constants/string_const.dart';
-import 'package:skincare_products_shopping_app/presentation/screens/home_screen.dart';
+import 'package:skincare_products_shopping_app/routing/router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +12,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: StringConst.appTitle,
       theme: ThemeData(
         brightness: .light
       ),
-      home: HomeScreen()
+      routerConfig: router,
+      builder: (ctx, child) => child!,
     );
   }
 }
