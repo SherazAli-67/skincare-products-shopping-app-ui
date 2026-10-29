@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:skincare_products_shopping_app/constants/string_const.dart';
+import 'package:skincare_products_shopping_app/presentation/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,12 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: StringConst.appTitle,
       theme: ThemeData(
-       
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        brightness: .light
       ),
-      home: Scaffold(body: Center(child: Text("Skincare Products Shopping app"),),)
+      home: HomeScreen()
     );
   }
 }
