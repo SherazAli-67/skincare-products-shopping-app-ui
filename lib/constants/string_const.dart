@@ -18,4 +18,9 @@ class StringConst {
   static const categoryCleansers = 'Cleansers';
 
   static const currencyPrefix = 'PKR ';
+
+  static const favorites = 'Favorites';
+  static const cart = 'Cart';
+  static const favoritesEmpty = 'No favorites yet';
+  static const cartEmpty = 'Your cart is empty';
 }
