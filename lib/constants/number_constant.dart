@@ -9,6 +9,9 @@ class NumberConstant {
   static const detailsPanelRadius = 24.0;
   static const popularThumbRadius = 12.0;
   static const avatarRadius = 34.0;
+  static const avatarSize = 42.0;
+  static const bottomNavClearance = 80.0;
+  static const headerGap = 10.0;
   static const categoryDotSize = 8.0;
   static const categoryChipGap = 4.0;
   static const offerCardPadding = 14.0;

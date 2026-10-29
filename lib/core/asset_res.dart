@@ -8,6 +8,7 @@ class AssetRes {
   static const breathMassage2ProdImg = '${_imagesPath}breath_massage2_prod_img.png';
   static const cherriesCheerBodyProdImg = '${_imagesPath}cherries_cheer_body_prod_img.png';
   static const whiteMuskProdImg = '${_imagesPath}white_must_prod_img.png';
+  static const userAvatarImg = '${_imagesPath}user_avatar_img.jpg';
 
   static const icHome = '${_iconsPath}ic_home.svg';
   static const icExplore = '${_iconsPath}ic_explore.svg';
