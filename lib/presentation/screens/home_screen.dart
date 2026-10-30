@@ -5,6 +5,7 @@ import 'package:skincare_products_shopping_app/constants/number_constant.dart';
 import 'package:skincare_products_shopping_app/constants/string_const.dart';
 import 'package:skincare_products_shopping_app/core/app_colors.dart';
 import 'package:skincare_products_shopping_app/core/app_data.dart';
+import 'package:skincare_products_shopping_app/core/app_motion.dart';
 import 'package:skincare_products_shopping_app/core/app_textstyles.dart';
 import 'package:skincare_products_shopping_app/core/asset_res.dart';
 import 'package:skincare_products_shopping_app/core/models/product_model.dart';
@@ -67,22 +68,21 @@ class HomeScreen extends StatelessWidget {
             spacing: NumberConstant.headerGap,
             children: [
               ClipOval(
-                //userAvatarImg, widthHeight: avatarSize, fit.cover
-                child: const SizedBox()
+                child: Image.asset(AssetRes.userAvatarImg, width: NumberConstant.avatarSize, height: NumberConstant.avatarSize, fit: .cover,),
               ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    //goodMorning, greeting,
-                    //userName, userName,
+                    Text(StringConst.goodMorning, style: AppTextStyles.greeting,),
+                    Text(StringConst.userName, style: AppTextStyles.userName,),
                   ],
                 ),
               ),
             ],
           ),
         ),
-        // CircleIconButton(icon: AssetRes.icSearch, onTap: () => context.go(NamedRoutes.explore.routeName),),
+        CircleIconButton(icon: AssetRes.icSearch, onTap: () => context.go(NamedRoutes.explore.routeName),),
       ],
     );
   }
@@ -93,12 +93,10 @@ class HomeScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            //popularProduct, sectionTitle
-            Expanded(child: const SizedBox()),
+            Expanded(child: Text(StringConst.popularProduct, style: AppTextStyles.sectionTitle,)),
             GestureDetector(
               onTap: () => context.go(NamedRoutes.explore.routeName),
-              //viewAll, viewAll, textAlign.right
-              child: const SizedBox()
+              child: Text(StringConst.viewAll, style: AppTextStyles.viewAll,),
             ),
           ],
         ),
@@ -109,7 +107,13 @@ class HomeScreen extends StatelessWidget {
             separatorBuilder: (_, _) => const SizedBox(height: NumberConstant.contentGap),
             itemBuilder: (context, index) {
               final product = AppData.popularProducts[index];
-              return PopularProductTile(product: product, onTap: () => context.push(NamedRoutes.productDetails(product.id)),);
+              return StaggeredFadeSlide(
+                index: index,
+                child: PopularProductTile(
+                  product: product,
+                  onTap: () => context.push(NamedRoutes.productDetails(product.id)),
+                ),
+              );
             },
           ),
         ),
@@ -132,15 +136,34 @@ class _CategoryList extends StatelessWidget {
           final isSelected = provider.selectedCategory == category;
           return GestureDetector(
             onTap: () => provider.selectCategory(category),
+            behavior: .opaque,
             child: Row(
               spacing: NumberConstant.categoryChipGap,
               children: [
-             /*   if (isSelected)
-                  DecoratedBox(
-                  decoration: BoxDecoration(color: AppColors.primaryGreenColor, shape: .circle),
-                  child: SizedBox(width: NumberConstant.categoryDotSize, height: NumberConstant.categoryDotSize,),
-                ),*/
-                //category, style: isSelected ? AppTextStyles.categorySelected : AppTextStyles.categoryUnselected,
+                SizedBox(
+                  width: NumberConstant.categoryDotSize,
+                  height: NumberConstant.categoryDotSize,
+                  child: AnimatedScale(
+                    scale: isSelected ? 1 : 0.4,
+                    duration: AppMotion.micro,
+                    curve: AppMotion.curve,
+                    child: AnimatedOpacity(
+                      opacity: isSelected ? 1 : 0,
+                      duration: AppMotion.micro,
+                      curve: AppMotion.curve,
+                      child: const DecoratedBox(
+                        decoration: BoxDecoration(color: AppColors.primaryGreenColor, shape: .circle),
+                        child: SizedBox.expand(),
+                      ),
+                    ),
+                  ),
+                ),
+                AnimatedDefaultTextStyle(
+                  duration: AppMotion.micro,
+                  curve: AppMotion.curve,
+                  style: isSelected ? AppTextStyles.categorySelected : AppTextStyles.categoryUnselected,
+                  child: Text(category),
+                ),
               ],
             ),
           );
@@ -155,21 +178,90 @@ class _OfferCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final products = context.watch<HomeCategoryProvider>().filteredProducts;
+    final provider = context.watch<HomeCategoryProvider>();
+    final products = provider.filteredProducts;
     if (products.isEmpty) return const SizedBox.shrink();
+
+    return AnimatedSwitcher(
+      duration: AppMotion.medium,
+      switchInCurve: AppMotion.curve,
+      switchOutCurve: AppMotion.curve,
+      transitionBuilder: (child, animation) {
+        final offset = Tween<Offset>(begin: const Offset(0.04, 0), end: Offset.zero).animate(animation);
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(position: offset, child: child),
+        );
+      },
+      child: _OfferCarouselList(
+        key: ValueKey(provider.selectedCategory),
+        products: products,
+      ),
+    );
+  }
+}
+
+class _OfferCarouselList extends StatefulWidget {
+  final List<ProductModel> products;
+
+  const _OfferCarouselList({super.key, required this.products});
+
+  @override
+  State<_OfferCarouselList> createState() => _OfferCarouselListState();
+}
+
+class _OfferCarouselListState extends State<_OfferCarouselList> {
+  late final ScrollController _scrollController;
+
+  static const _itemExtent = NumberConstant.offerCardWidth + NumberConstant.cardGap;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  double _scaleForIndex(int index) {
+    if (!_scrollController.hasClients) {
+      return index == 0 ? 1 : AppMotion.carouselIdleScale;
+    }
+    final distance = (index * _itemExtent - _scrollController.offset).abs();
+    final t = (distance / NumberConstant.offerCardWidth).clamp(0.0, 1.0);
+    return 1 - (t * (1 - AppMotion.carouselIdleScale));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.separated(
+      controller: _scrollController,
       scrollDirection: .horizontal,
-      itemCount: products.length,
+      itemCount: widget.products.length,
       separatorBuilder: (_, _) => const SizedBox(width: NumberConstant.cardGap),
       itemBuilder: (context, index) {
-        final product = products[index];
+        final product = widget.products[index];
         final useGreenAction = index < 2;
-        return ProductOfferCard(
-          product: product,
-          width: NumberConstant.offerCardWidth,
-          height: NumberConstant.offerCardHeight,
-          actionColor: useGreenAction ? AppColors.primaryGreenColor : AppColors.blackColor,
-          onTap: () => context.push(NamedRoutes.productDetails(product.id)),
+        return Transform.scale(
+          scale: _scaleForIndex(index),
+          alignment: .center,
+          child: ProductOfferCard(
+            product: product,
+            width: NumberConstant.offerCardWidth,
+            height: NumberConstant.offerCardHeight,
+            actionColor: useGreenAction ? AppColors.primaryGreenColor : AppColors.blackColor,
+            onTap: () => context.push(NamedRoutes.productDetails(product.id)),
+          ),
         );
       },
     );

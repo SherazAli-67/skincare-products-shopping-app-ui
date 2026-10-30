@@ -36,7 +36,7 @@ class ProductOfferCard extends StatelessWidget {
         width: width,
         height: height,
         padding: .all(NumberConstant.offerCardPadding),
-        // decoration: BoxDecoration(color: product.backgroundColor, borderRadius: .circular(NumberConstant.cardRadius),),
+        decoration: BoxDecoration(color: product.backgroundColor, borderRadius: .circular(NumberConstant.cardRadius),),
         child: Column(
           spacing: NumberConstant.offerCardFooterGap,
           children: [
@@ -46,8 +46,9 @@ class ProductOfferCard extends StatelessWidget {
                 crossAxisAlignment: .stretch,
                 children: [
                   //product.name, productCardTitle, maxLines: 2,
+                  Text(product.name, style: AppTextStyles.productCardTitle, maxLines: 2),
                   //img: product.image, fit.contain
-                  Expanded(child: const SizedBox()),
+                  Expanded(child: Image.asset(product.image, fit: .contain,)),
                 ],
               ),
             ),
@@ -57,9 +58,9 @@ class ProductOfferCard extends StatelessWidget {
                 filter: ImageFilter.blur(sigmaX: NumberConstant.frostBlur, sigmaY: NumberConstant.frostBlur),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    // color: AppColors.frostWhiteColor,
-                    // borderRadius: .circular(NumberConstant.pillRadius),
-                    // border: .all(color: AppColors.frostBorderColor),
+                    color: AppColors.frostWhiteColor,
+                    borderRadius: .circular(NumberConstant.pillRadius),
+                    border: .all(color: AppColors.frostBorderColor),
                   ),
                   child: Padding(
                     padding: .only(
@@ -72,14 +73,14 @@ class ProductOfferCard extends StatelessWidget {
                       spacing: NumberConstant.categoryChipGap,
                       children: [
                         //product.formattedPrice, productPrice, maxLines: 1
-                        Expanded(child: const SizedBox()),
-                       /* CircleIconButton(
+                        Expanded(child: Text(product.formattedPrice, style: AppTextStyles.productPrice,)),
+                        CircleIconButton(
                           icon: AssetRes.icArrowNext,
                           onTap: onActionTap ?? onTap,
                           backgroundColor: actionColor,
                           iconColor: actionIconColor,
                           padding: .all(NumberConstant.smallCircleButtonPadding),
-                        ),*/
+                        ),
                       ],
                     ),
                   ),
