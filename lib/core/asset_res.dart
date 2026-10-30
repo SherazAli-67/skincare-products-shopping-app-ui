@@ -9,6 +9,7 @@ class AssetRes {
   static const cherriesCheerBodyProdImg = '${_imagesPath}cherries_cheer_body_prod_img.png';
   static const whiteMuskProdImg = '${_imagesPath}white_must_prod_img.png';
   static const userAvatarImg = '${_imagesPath}user_avatar_img.jpg';
+  static const productDetailBg = '${_imagesPath}product_detail_bg.svg';
 
   static const icHome = '${_iconsPath}ic_home.svg';
   static const icExplore = '${_iconsPath}ic_explore.svg';
@@ -18,4 +19,7 @@ class AssetRes {
   static const icFilter = '${_iconsPath}ic_filter.svg';
   static const icArrowBack = '${_iconsPath}ic_arrow_back.svg';
   static const icArrowNext = '${_iconsPath}ic_arrow_next.svg';
+  static const icMinus = '${_iconsPath}ic_minus.svg';
+  static const icPlus = '${_iconsPath}ic_plus.svg';
+  static const icCaretDoubleUp = '${_iconsPath}ic_caret_double_up.svg';
 }

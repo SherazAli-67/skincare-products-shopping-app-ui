@@ -46,5 +46,11 @@ class NumberConstant {
   static const addToCartBarLeadingPadding = 14.0;
   static const addToCartBarTrailingPadding = 4.0;
   static const addToCartBarVerticalPadding = 4.0;
+  static const addToCartBarGap = 4.0;
   static const productDetailImageWidth = 220.0;
+  static const productDetailTitleGap = 10.0;
+  static const productDetailPanelBlur = 10.0;
+  static const detailsSheetInitialSize = 0.45;
+  static const detailsSheetMinSize = 0.3;
+  static const detailsSheetMaxSize = 0.85;
 }

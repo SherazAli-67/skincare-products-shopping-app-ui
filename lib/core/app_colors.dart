@@ -23,4 +23,6 @@ class AppColors {
   static const searchInnerShadowColor = Color(0x0D000000);
   static const navShadowColor = Color(0x59000000);
   static const cartShadowColor = Color(0x1A24BD63);
+  static const transparentColor = Color(0x00000000);
+  static const detailScreenBgColor = Color(0xffCCFFE1);
 }

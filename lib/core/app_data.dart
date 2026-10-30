@@ -70,6 +70,16 @@ class AppData {
     ),
   ];
 
+  static ProductModel? productById(String id) {
+    for (final product in products) {
+      if (product.id == id) return product;
+    }
+    for (final product in popularProducts) {
+      if (product.id == id) return product;
+    }
+    return null;
+  }
+
   static const popularProducts = [
     ProductModel(
       id: '7',

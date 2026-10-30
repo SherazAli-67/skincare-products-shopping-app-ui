@@ -24,6 +24,14 @@ class AppTextStyles {
     color: AppColors.primaryTextColor,
   );
 
+  static const productDetailTitle = TextStyle(
+    fontFamily: StringConst.appFontFamily,
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+    height: 20 / 20,
+    color: AppColors.primaryTextColor,
+  );
+
   static const sectionTitle = TextStyle(
     fontFamily: StringConst.appFontFamily,
     fontWeight: FontWeight.w500,

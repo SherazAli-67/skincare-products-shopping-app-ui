@@ -23,4 +23,7 @@ class StringConst {
   static const cart = 'Cart';
   static const favoritesEmpty = 'No favorites yet';
   static const cartEmpty = 'Your cart is empty';
+  static const productNotFound = 'Product not found';
+  static const productDetailsTitle = 'Product Details';
+  static const productDetailsBody = 'A purifying 3-in-1 formula that washes, scrubs, and masks to leave skin feeling fresh, clear, and refined. Ideal for blemish-prone skin as part of your daily routine.';
 }
