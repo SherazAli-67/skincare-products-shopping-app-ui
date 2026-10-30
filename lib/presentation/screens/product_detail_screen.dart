@@ -8,6 +8,7 @@ import 'package:skincare_products_shopping_app/constants/number_constant.dart';
 import 'package:skincare_products_shopping_app/constants/string_const.dart';
 import 'package:skincare_products_shopping_app/core/app_colors.dart';
 import 'package:skincare_products_shopping_app/core/app_data.dart';
+import 'package:skincare_products_shopping_app/core/app_motion.dart';
 import 'package:skincare_products_shopping_app/core/app_textstyles.dart';
 import 'package:skincare_products_shopping_app/core/asset_res.dart';
 import 'package:skincare_products_shopping_app/core/models/product_model.dart';
@@ -16,19 +17,25 @@ import 'package:skincare_products_shopping_app/routing/router.dart';
 
 class ProductQuantityProvider extends ChangeNotifier {
   int _quantity = 1;
+  int _direction = 1;
 
   int get quantity => _quantity;
+
+  /// 1 when increasing, -1 when decreasing — drives quantity slide direction.
+  int get direction => _direction;
 
   String get formattedQuantity => _quantity.toString().padLeft(2, '0');
 
   void increment() {
     _quantity += 1;
+    _direction = 1;
     notifyListeners();
   }
 
   void decrement() {
     if (_quantity <= 1) return;
     _quantity -= 1;
+    _direction = -1;
     notifyListeners();
   }
 }
@@ -55,58 +62,58 @@ class ProductDetailScreen extends StatelessWidget {
             gradient: LinearGradient(
               colors: [
                 Colors.white,
-                Colors.white.withValues(alpha: 0.7)
+                Colors.white.withValues(alpha: 0.7),
               ],
               begin: .topCenter,
-              end: .bottomCenter
-            )
+              end: .bottomCenter,
+            ),
           ),
           child: Stack(
             children: [
-              // const _ProductDetailBackground(),
               SafeArea(
                 child: Padding(
                   padding: .all(NumberConstant.horizontalPadding),
                   child: Stack(
-                    // spacing: NumberConstant.sectionGap,
                     children: [
                       ImageFiltered(
-                        imageFilter: ImageFilter.blur(
-                          sigmaX: 224,
-                          sigmaY: 224,
-                        ),
+                        imageFilter: ImageFilter.blur(sigmaX: 224, sigmaY: 224),
                         child: Container(
                           decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [
-                                    Colors.white,
-                                    product.backgroundColor
-                                  ],
-                                  begin: .topCenter,
-                                  end: .bottomCenter
-                              )
+                            gradient: LinearGradient(
+                              colors: [Colors.white, product.backgroundColor],
+                              begin: .topCenter,
+                              end: .bottomCenter,
+                            ),
                           ),
                         ),
                       ),
-
                       Center(
-                        child: Image.asset(product.image, width: NumberConstant.productDetailImageWidth, height: 450,),
+                        child: Hero(
+                          tag: AppMotion.productHeroTag(product.id),
+                          child: Image.asset(
+                            product.image,
+                            width: NumberConstant.productDetailImageWidth,
+                            height: 450,
+                          ),
+                        ),
                       ),
-                     Positioned(
-                         bottom: 10,
-                         left: 0,
-                         right: 0,
-                         child: Column(
-                       children: [
-                         const _QuantitySelector(),
-                         _DetailsPanel(product: product)
-                       ],
-                     )),
+                      Positioned(
+                        bottom: 10,
+                        left: 0,
+                        right: 0,
+                        child: Column(
+                          children: [
+                            const _QuantitySelector(),
+                            _DetailsPanel(product: product),
+                          ],
+                        ),
+                      ),
                       Positioned(
                         top: 0,
                         left: 0,
                         right: 0,
-                        child: _buildHeader(context, product),)
+                        child: _DetailHeader(product: product),
+                      ),
                     ],
                   ),
                 ),
@@ -117,27 +124,67 @@ class ProductDetailScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context, ProductModel product) {
-    return Row(
-      crossAxisAlignment: .start,
-      children: [
-        Expanded(
-          child: Column(
-            spacing: NumberConstant.productDetailTitleGap,
-            crossAxisAlignment: .start,
-            children: [
-              Text(product.name, style: AppTextStyles.productDetailTitle,),
-              Text(product.volume, style: AppTextStyles.productDetailVolume,),
-            ],
-          ),
+class _DetailHeader extends StatefulWidget {
+  final ProductModel product;
+
+  const _DetailHeader({required this.product});
+
+  @override
+  State<_DetailHeader> createState() => _DetailHeaderState();
+}
+
+class _DetailHeaderState extends State<_DetailHeader>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: AppMotion.medium);
+    final curved = CurvedAnimation(parent: _controller, curve: AppMotion.curve);
+    _fade = curved;
+    _slide = Tween<Offset>(begin: const Offset(0, -0.08), end: Offset.zero).animate(curved);
+    Future<void>.delayed(const Duration(milliseconds: 120), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: Row(
+          crossAxisAlignment: .start,
+          children: [
+            Expanded(
+              child: Column(
+                spacing: NumberConstant.productDetailTitleGap,
+                crossAxisAlignment: .start,
+                children: [
+                  Text(widget.product.name, style: AppTextStyles.productDetailTitle,),
+                  Text(widget.product.volume, style: AppTextStyles.productDetailVolume,),
+                ],
+              ),
+            ),
+            CircleIconButton(icon: AssetRes.icArrowBack, onTap: () => context.pop(),),
+          ],
         ),
-        CircleIconButton(icon: AssetRes.icArrowBack, onTap: () => context.pop(),),
-      ],
+      ),
     );
   }
 }
-
 
 class _QuantitySelector extends StatelessWidget {
   const _QuantitySelector();
@@ -153,7 +200,27 @@ class _QuantitySelector extends StatelessWidget {
           onTap: provider.decrement,
           backgroundColor: AppColors.transparentColor,
         ),
-        Text(provider.formattedQuantity, style: AppTextStyles.quantity, textAlign: .center,),
+        AnimatedSwitcher(
+          duration: AppMotion.micro,
+          switchInCurve: AppMotion.curve,
+          switchOutCurve: AppMotion.curve,
+          transitionBuilder: (child, animation) {
+            final offset = Tween<Offset>(
+              begin: Offset(0, 0.35 * provider.direction),
+              end: Offset.zero,
+            ).animate(animation);
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(position: offset, child: child),
+            );
+          },
+          child: Text(
+            provider.formattedQuantity,
+            key: ValueKey(provider.quantity),
+            style: AppTextStyles.quantity,
+            textAlign: .center,
+          ),
+        ),
         CircleIconButton(
           icon: AssetRes.icPlus,
           onTap: provider.increment,
@@ -164,65 +231,135 @@ class _QuantitySelector extends StatelessWidget {
   }
 }
 
-class _DetailsPanel extends StatelessWidget {
+class _DetailsPanel extends StatefulWidget {
   final ProductModel product;
 
   const _DetailsPanel({required this.product});
 
   @override
+  State<_DetailsPanel> createState() => _DetailsPanelState();
+}
+
+class _DetailsPanelState extends State<_DetailsPanel>
+    with TickerProviderStateMixin {
+  late final AnimationController _entranceController;
+  late final AnimationController _nudgeController;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+  late final Animation<Offset> _nudge;
+
+  @override
+  void initState() {
+    super.initState();
+    _entranceController = AnimationController(vsync: this, duration: AppMotion.page);
+    final entranceCurved = CurvedAnimation(parent: _entranceController, curve: AppMotion.curve);
+    _fade = entranceCurved;
+    _slide = Tween<Offset>(begin: const Offset(0, 0.18), end: Offset.zero).animate(entranceCurved);
+
+    _nudgeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _nudge = Tween<Offset>(begin: Offset.zero, end: const Offset(0, -0.18)).animate(
+      CurvedAnimation(parent: _nudgeController, curve: Curves.easeInOut),
+    );
+
+    Future<void>.delayed(const Duration(milliseconds: 220), () async {
+      if (!mounted) return;
+      await _entranceController.forward();
+      if (!mounted) return;
+      for (var i = 0; i < 3; i++) {
+        await _nudgeController.forward();
+        if (!mounted) return;
+        await _nudgeController.reverse();
+        if (!mounted) return;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    _nudgeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragEnd: (details) {
-        if ((details.primaryVelocity ?? 0) < 0) _showDetailsSheet(context);
-      },
-      onTap: () => _showDetailsSheet(context),
-      child: ClipRRect(
-        borderRadius: .circular(NumberConstant.detailsPanelRadius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: NumberConstant.productDetailPanelBlur, sigmaY: NumberConstant.productDetailPanelBlur),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.limePanelColor,
-              borderRadius: .circular(NumberConstant.detailsPanelRadius),
-              boxShadow: [BoxShadow(color: AppColors.cartShadowColor, blurRadius: NumberConstant.navShadowBlur),],
-            ),
-            child: Padding(
-              padding: .only(top: NumberConstant.detailsPanelTopPadding),
-              child: Column(
-                spacing: NumberConstant.detailsPanelGap,
-                mainAxisSize: .min,
-                children: [
-                  Column(
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: GestureDetector(
+          onVerticalDragEnd: (details) {
+            if ((details.primaryVelocity ?? 0) < 0) _showDetailsSheet(context);
+          },
+          onTap: () => _showDetailsSheet(context),
+          child: ClipRRect(
+            borderRadius: .circular(NumberConstant.detailsPanelRadius),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: NumberConstant.productDetailPanelBlur,
+                sigmaY: NumberConstant.productDetailPanelBlur,
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.limePanelColor,
+                  borderRadius: .circular(NumberConstant.detailsPanelRadius),
+                  boxShadow: [
+                    BoxShadow(color: AppColors.cartShadowColor, blurRadius: NumberConstant.navShadowBlur),
+                  ],
+                ),
+                child: Padding(
+                  padding: .only(top: NumberConstant.detailsPanelTopPadding),
+                  child: Column(
+                    spacing: NumberConstant.detailsPanelGap,
+                    mainAxisSize: .min,
                     children: [
-                      SvgPicture.asset(AssetRes.icCaretDoubleUp, colorFilter: .mode(AppColors.blackColor, .srcIn),),
-                      Text(StringConst.swipeToMoreDetails, style: AppTextStyles.swipeHint,),
+                      SlideTransition(
+                        position: _nudge,
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              AssetRes.icCaretDoubleUp,
+                              colorFilter: .mode(AppColors.blackColor, .srcIn),
+                            ),
+                            Text(StringConst.swipeToMoreDetails, style: AppTextStyles.swipeHint,),
+                          ],
+                        ),
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          borderRadius: .circular(NumberConstant.pillRadius),
+                        ),
+                        child: Padding(
+                          padding: .only(
+                            left: NumberConstant.addToCartBarLeadingPadding,
+                            right: NumberConstant.addToCartBarTrailingPadding,
+                            top: NumberConstant.addToCartBarVerticalPadding,
+                            bottom: NumberConstant.addToCartBarVerticalPadding,
+                          ),
+                          child: Row(
+                            spacing: NumberConstant.addToCartBarGap,
+                            children: [
+                              Expanded(
+                                child: Text(widget.product.formattedPrice, style: AppTextStyles.productDetailPrice,),
+                              ),
+                              CircleIconButton(
+                                icon: AssetRes.icCart,
+                                onTap: () => context.go(NamedRoutes.cart.routeName),
+                                backgroundColor: AppColors.blackColor,
+                                iconColor: AppColors.whiteColor,
+                                padding: .all(NumberConstant.filterButtonPadding),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  DecoratedBox(
-                    decoration: BoxDecoration(color: AppColors.whiteColor, borderRadius: .circular(NumberConstant.pillRadius),),
-                    child: Padding(
-                      padding: .only(
-                        left: NumberConstant.addToCartBarLeadingPadding,
-                        right: NumberConstant.addToCartBarTrailingPadding,
-                        top: NumberConstant.addToCartBarVerticalPadding,
-                        bottom: NumberConstant.addToCartBarVerticalPadding,
-                      ),
-                      child: Row(
-                        spacing: NumberConstant.addToCartBarGap,
-                        children: [
-                          Expanded(child: Text(product.formattedPrice, style: AppTextStyles.productDetailPrice,),),
-                          CircleIconButton(
-                            icon: AssetRes.icCart,
-                            onTap: () => context.go(NamedRoutes.cart.routeName),
-                            backgroundColor: AppColors.blackColor,
-                            iconColor: AppColors.whiteColor,
-                            padding: .all(NumberConstant.filterButtonPadding),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -253,9 +390,14 @@ class _DetailsPanel extends StatelessWidget {
                 spacing: NumberConstant.contentGap,
                 crossAxisAlignment: .start,
                 children: [
-                  Center(child: SvgPicture.asset(AssetRes.icCaretDoubleUp, colorFilter: .mode(AppColors.blackColor, .srcIn),),),
+                  Center(
+                    child: SvgPicture.asset(
+                      AssetRes.icCaretDoubleUp,
+                      colorFilter: .mode(AppColors.blackColor, .srcIn),
+                    ),
+                  ),
                   Text(StringConst.productDetailsTitle, style: AppTextStyles.sectionTitle,),
-                  Text(product.name, style: AppTextStyles.productCardTitle,),
+                  Text(widget.product.name, style: AppTextStyles.productCardTitle,),
                   Text(StringConst.productDetailsBody, style: AppTextStyles.productDetailVolume,),
                 ],
               ),

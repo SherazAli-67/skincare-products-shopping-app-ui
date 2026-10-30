@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skincare_products_shopping_app/core/app_motion.dart';
 import 'package:skincare_products_shopping_app/presentation/screens/cart_screen.dart';
 import 'package:skincare_products_shopping_app/presentation/screens/explore_screen.dart';
 import 'package:skincare_products_shopping_app/presentation/screens/favorites_screen.dart';
@@ -20,7 +22,24 @@ GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '${NamedRoutes.product.routeName}/:id',
-      builder: (context, state) => ProductDetailScreen(productId: state.pathParameters['id']!,),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: ProductDetailScreen(productId: state.pathParameters['id']!),
+          transitionDuration: AppMotion.page,
+          reverseTransitionDuration: AppMotion.medium,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curved = CurvedAnimation(parent: animation, curve: AppMotion.curve);
+            return FadeTransition(
+              opacity: curved,
+              child: SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 0.04), end: Offset.zero).animate(curved),
+                child: child,
+              ),
+            );
+          },
+        );
+      },
     ),
   ],
 );

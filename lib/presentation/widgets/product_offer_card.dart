@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:skincare_products_shopping_app/constants/number_constant.dart';
 import 'package:skincare_products_shopping_app/core/app_colors.dart';
+import 'package:skincare_products_shopping_app/core/app_motion.dart';
 import 'package:skincare_products_shopping_app/core/app_textstyles.dart';
 import 'package:skincare_products_shopping_app/core/asset_res.dart';
 import 'package:skincare_products_shopping_app/core/models/product_model.dart';
@@ -47,8 +48,12 @@ class ProductOfferCard extends StatelessWidget {
                 children: [
                   //product.name, productCardTitle, maxLines: 2,
                   Text(product.name, style: AppTextStyles.productCardTitle, maxLines: 2),
-                  //img: product.image, fit.contain
-                  Expanded(child: Image.asset(product.image, fit: .contain,)),
+                  Expanded(
+                    child: Hero(
+                      tag: AppMotion.productHeroTag(product.id),
+                      child: Image.asset(product.image, fit: .contain,),
+                    ),
+                  ),
                 ],
               ),
             ),

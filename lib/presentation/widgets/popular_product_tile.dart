@@ -44,15 +44,18 @@ class _PopularProductTileState extends State<PopularProductTile> {
             child: Row(
               spacing: NumberConstant.popularTileGap,
               children: [
-                ClipRRect(
-                  borderRadius: .circular(NumberConstant.popularThumbRadius),
-                  child: ColoredBox(
-                    color: AppColors.cardCreamColor,
-                    child: Image.asset(
-                      widget.product.image,
-                      width: NumberConstant.popularThumbSize,
-                      height: NumberConstant.popularThumbSize,
-                      fit: .contain,
+                Hero(
+                  tag: AppMotion.productHeroTag(widget.product.id),
+                  child: ClipRRect(
+                    borderRadius: .circular(NumberConstant.popularThumbRadius),
+                    child: ColoredBox(
+                      color: AppColors.cardCreamColor,
+                      child: Image.asset(
+                        widget.product.image,
+                        width: NumberConstant.popularThumbSize,
+                        height: NumberConstant.popularThumbSize,
+                        fit: .contain,
+                      ),
                     ),
                   ),
                 ),
