@@ -38,6 +38,9 @@ class NumberConstant {
   static const searchBarTrailingPadding = 4.0;
   static const searchBarVerticalPadding = 4.0;
   static const searchBarGap = 8.0;
+  static const filterButtonPadding = 10.0;
+  static const gridCrossAxisCount = 2;
+  static const gridCardHeight = 299.0;
   static const detailsPanelTopPadding = 14.0;
   static const detailsPanelGap = 12.0;
   static const addToCartBarLeadingPadding = 14.0;
