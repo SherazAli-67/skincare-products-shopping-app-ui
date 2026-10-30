@@ -36,7 +36,7 @@ class ProductOfferCard extends StatelessWidget {
         width: width,
         height: height,
         padding: .all(NumberConstant.offerCardPadding),
-        decoration: BoxDecoration(color: product.backgroundColor, borderRadius: .circular(NumberConstant.cardRadius),),
+        // decoration: BoxDecoration(color: product.backgroundColor, borderRadius: .circular(NumberConstant.cardRadius),),
         child: Column(
           spacing: NumberConstant.offerCardFooterGap,
           children: [
@@ -45,8 +45,9 @@ class ProductOfferCard extends StatelessWidget {
                 spacing: NumberConstant.offerCardInnerGap,
                 crossAxisAlignment: .stretch,
                 children: [
-                  Text(product.name, style: AppTextStyles.productCardTitle, maxLines: 2, overflow: .ellipsis,),
-                  Expanded(child: Image.asset(product.image, fit: .contain),),
+                  //product.name, productCardTitle, maxLines: 2,
+                  //img: product.image, fit.contain
+                  Expanded(child: const SizedBox()),
                 ],
               ),
             ),
@@ -56,9 +57,9 @@ class ProductOfferCard extends StatelessWidget {
                 filter: ImageFilter.blur(sigmaX: NumberConstant.frostBlur, sigmaY: NumberConstant.frostBlur),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: AppColors.frostWhiteColor,
-                    borderRadius: .circular(NumberConstant.pillRadius),
-                    border: .all(color: AppColors.frostBorderColor),
+                    // color: AppColors.frostWhiteColor,
+                    // borderRadius: .circular(NumberConstant.pillRadius),
+                    // border: .all(color: AppColors.frostBorderColor),
                   ),
                   child: Padding(
                     padding: .only(
@@ -70,14 +71,15 @@ class ProductOfferCard extends StatelessWidget {
                     child: Row(
                       spacing: NumberConstant.categoryChipGap,
                       children: [
-                        Expanded(child: Text(product.formattedPrice, style: AppTextStyles.productPrice, maxLines: 1, overflow: .ellipsis,),),
-                        CircleIconButton(
+                        //product.formattedPrice, productPrice, maxLines: 1
+                        Expanded(child: const SizedBox()),
+                       /* CircleIconButton(
                           icon: AssetRes.icArrowNext,
                           onTap: onActionTap ?? onTap,
                           backgroundColor: actionColor,
                           iconColor: actionIconColor,
                           padding: .all(NumberConstant.smallCircleButtonPadding),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

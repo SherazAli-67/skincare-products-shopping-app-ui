@@ -67,21 +67,22 @@ class HomeScreen extends StatelessWidget {
             spacing: NumberConstant.headerGap,
             children: [
               ClipOval(
-                child: Image.asset(AssetRes.userAvatarImg, width: NumberConstant.avatarSize, height: NumberConstant.avatarSize, fit: .cover,),
+                //userAvatarImg, widthHeight: avatarSize, fit.cover
+                child: const SizedBox()
               ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    Text(StringConst.goodMorning, style: AppTextStyles.greeting,),
-                    Text(StringConst.userName, style: AppTextStyles.userName, maxLines: 1, overflow: .ellipsis,),
+                    //goodMorning, greeting,
+                    //userName, userName,
                   ],
                 ),
               ),
             ],
           ),
         ),
-        CircleIconButton(icon: AssetRes.icSearch, onTap: () => context.go(NamedRoutes.explore.routeName),),
+        // CircleIconButton(icon: AssetRes.icSearch, onTap: () => context.go(NamedRoutes.explore.routeName),),
       ],
     );
   }
@@ -92,10 +93,12 @@ class HomeScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text(StringConst.popularProduct, style: AppTextStyles.sectionTitle,),),
+            //popularProduct, sectionTitle
+            Expanded(child: const SizedBox()),
             GestureDetector(
               onTap: () => context.go(NamedRoutes.explore.routeName),
-              child: Text(StringConst.viewAll, style: AppTextStyles.viewAll, textAlign: .right,),
+              //viewAll, viewAll, textAlign.right
+              child: const SizedBox()
             ),
           ],
         ),
@@ -132,11 +135,12 @@ class _CategoryList extends StatelessWidget {
             child: Row(
               spacing: NumberConstant.categoryChipGap,
               children: [
-                if (isSelected) DecoratedBox(
+             /*   if (isSelected)
+                  DecoratedBox(
                   decoration: BoxDecoration(color: AppColors.primaryGreenColor, shape: .circle),
                   child: SizedBox(width: NumberConstant.categoryDotSize, height: NumberConstant.categoryDotSize,),
-                ),
-                Text(category, style: isSelected ? AppTextStyles.categorySelected : AppTextStyles.categoryUnselected,),
+                ),*/
+                //category, style: isSelected ? AppTextStyles.categorySelected : AppTextStyles.categoryUnselected,
               ],
             ),
           );

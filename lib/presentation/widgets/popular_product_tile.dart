@@ -17,7 +17,8 @@ class PopularProductTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: DecoratedBox(
-        decoration: BoxDecoration(color: AppColors.surfaceGrayColor, borderRadius: .circular(NumberConstant.cardRadius),),
+        //surfaceGrayColor
+        decoration: BoxDecoration(color: Colors.transparent, borderRadius: .circular(NumberConstant.cardRadius),),
         child: Padding(
           padding: .all(NumberConstant.popularTilePadding),
           child: Row(
@@ -26,8 +27,10 @@ class PopularProductTile extends StatelessWidget {
               ClipRRect(
                 borderRadius: .circular(NumberConstant.popularThumbRadius),
                 child: ColoredBox(
+                  //cardCreamColor
                   color: AppColors.cardCreamColor,
-                  child: Image.asset(product.image, width: NumberConstant.popularThumbSize, height: NumberConstant.popularThumbSize, fit: .contain,),
+                  //product.image, widthHeight: popularThumbSize, fit.contain
+                  child: const SizedBox()
                 ),
               ),
               Expanded(
@@ -35,12 +38,12 @@ class PopularProductTile extends StatelessWidget {
                   spacing: NumberConstant.popularContentGap,
                   crossAxisAlignment: .start,
                   children: [
-                    Text(product.name, style: AppTextStyles.productCardTitle, maxLines: 2, overflow: .ellipsis,),
-                    Text(product.volume, style: AppTextStyles.productVolume,),
+                    //product.name, productCardTitle, maxLines:2,
+                    //product.volume, productVolume
                   ],
                 ),
               ),
-              SvgPicture.asset(AssetRes.icArrowNext, colorFilter: .mode(AppColors.blackColor, .srcIn),),
+              //icArrowNext
             ],
           ),
         ),
