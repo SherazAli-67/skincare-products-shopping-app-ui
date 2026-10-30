@@ -26,7 +26,7 @@ class PopularProductTile extends StatelessWidget {
               ClipRRect(
                 borderRadius: .circular(NumberConstant.popularThumbRadius),
                 child: ColoredBox(
-                  color: AppColors.whiteColor,
+                  color: AppColors.cardCreamColor,
                   child: Image.asset(product.image, width: NumberConstant.popularThumbSize, height: NumberConstant.popularThumbSize, fit: .contain,),
                 ),
               ),
